@@ -1,0 +1,4 @@
+dist/*
+welford.egg-info/*
+welford/__pycache__/*
+tmp.py
