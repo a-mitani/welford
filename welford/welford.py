@@ -42,8 +42,8 @@ class Welford:
             self.__s = np.zeros(self.__dim)
         else:
             self.__count = data.shape[0]
-            self.__m = np.mean(data)
-            self.__s = np.var(data, ddof=0) * data.shape[0]
+            self.__m = np.mean(data, axis=0)
+            self.__s = np.var(data, axis=0, ddof=0) * data.shape[0]
 
         # previous attribute values for rollbacking
         self.__count_old = None
@@ -63,12 +63,12 @@ class Welford:
     @property
     def var_s(self):
         """Sample variance of the recorded values"""
-        return self.__getvars(ddof=0)
+        return self.__getvars(ddof=1)
 
     @property
     def var_p(self):
         """Population variance of the recorded values"""
-        return self.__getvars(ddof=1)
+        return self.__getvars(ddof=0)
 
     def add_all(self, data):
         pass
