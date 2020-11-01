@@ -4,11 +4,11 @@ which is online or parallel algorithm for calculating variances.
 
 Welford's method is more numerically stable than the standard method. The theoritical background of Welford's method is mentioned in detail on the following blog articles. Please refer them if you are interested in.
 
-* www.johndcook.com/blog/standard_deviation
-* jonisalonen.com/2013/deriving-welfords-method-for-computing-variance/
+* http://www.johndcook.com/blog/standard_deviation
+* https://jonisalonen.com/2013/deriving-welfords-method-for-computing-variance/
 
 This library is inspired by the jvf's implementation, which is implemented without using numpy library. 
-* implementaion done by jvf: github.com/jvf/welford
+* https://github.com/jvf/welford
 
 ## Install
 ```
