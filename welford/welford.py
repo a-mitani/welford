@@ -70,14 +70,51 @@ class Welford:
         """Population variance of the recorded values"""
         return self.__getvars(ddof=0)
 
-    def add_all(self, data):
-        pass
+    def add(self, data, backup_flg=True):
+        # argument check
+        assert data.ndim == 1
+        assert data.shape[0] == self.__dim
 
-    def add(self, data):
-        pass
+        # backup for rollbacking
+        if backup_flg:
+            self.__backup_attrs()
 
-    def merge(self, other):
-        pass
+        # Welford's algorithm
+        self.__count += 1
+        delta = data - self.__m
+        self.__m += delta / self.__count
+        self.__s += delta * (data - self.__m)
+
+    def add_all(self, data, backup_flg=True):
+        # argument check
+        assert data.ndim == 2
+        assert data.shape[1] == self.__dim
+
+        # backup for rollbacking
+        if backup_flg:
+            self.__backup_attrs()
+
+        for elem in data:
+            self.add(elem, backup_flg=False)
+
+    def rollback(self):
+        self.__count = self.__count_old
+        self.__m = self.__m_old
+        self.__s = self.__s_old
+
+    def merge(self, other, backup_flg=True):
+        """Merge this accumulator with another one."""
+        # backup for rollbacking
+        if backup_flg:
+            self.__backup_attrs()
+        count = self.__count + other.__count
+        delta = self.__m - other.__m
+        delta2 = delta * delta
+        m = (self.__count * self.__m + other.__count * other.__m) / count
+        s = self.__s + other.__s + delta2 * (self.__count * other.__count) / count
+        self.__count = count
+        self.__m = m
+        self.__s = s
 
     def __getvars(self, ddof):
         min_count = ddof
@@ -85,3 +122,8 @@ class Welford:
             return np.full(self.__dim, np.nan)
         else:
             return self.__s / (self.__count - ddof)
+
+    def __backup_attrs(self):
+        self.__count_old = self.__count
+        self.__m_old = self.__m.copy()
+        self.__s_old = self.__s.copy()

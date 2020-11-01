@@ -2,7 +2,7 @@ from setuptools import setup
 
 kwargs = {
     "name": "welford",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Python(numpy) implementation of welford's algorithm.",
     "author": "Akira Mitani",
     "author_email": "amitani.public@gmail.com",
