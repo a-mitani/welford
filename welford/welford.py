@@ -19,28 +19,19 @@ import numpy as np
 class Welford:
     """Accumulator object for Welfords online variance algorithm."""
 
-    def __init__(self, elements=None, shape=None):
+    def __init__(self, elements=None):
         """Initialize with an optional data."""
-        # Check arguments
-        if elements is None:
-            if shape is None:
-                raise AttributeError(
-                    "If elements is not assigned, 'shape' must be assigned"
-                )
-        else:
-            if shape is not None:
-                assert elements[0].shape == shape
 
         # Initialize instance attributes
         if elements is not None:
             self.__shape = elements[0].shape
         else:
-            self.__shape = shape
+            self.__shape = None
 
         if elements is None:
             self.__count = 0
-            self.__m = np.zeros(self.__shape)
-            self.__s = np.zeros(self.__shape)
+            self.__m = None
+            self.__s = None
         else:
             self.__count = elements.shape[0]
             self.__m = np.mean(elements, axis=0)
@@ -72,8 +63,14 @@ class Welford:
         return self.__getvars(ddof=0)
 
     def add(self, element, backup_flg=True):
-        # argument check
-        assert element.shape == self.__shape
+        # Initialize if not yet.
+        if self.__count == 0:
+            self.__m = np.zeros(element.shape)
+            self.__s = np.zeros(element.shape)
+            self.__shape = element.shape
+        # argument check if already initialized
+        else:
+            assert element.shape == self.__shape
 
         # backup for rollbacking
         if backup_flg:
@@ -86,9 +83,6 @@ class Welford:
         self.__s += delta * (element - self.__m)
 
     def add_all(self, elements, backup_flg=True):
-        # argument check
-        assert elements[0].shape == self.__shape
-
         # backup for rollbacking
         if backup_flg:
             self.__backup_attrs()
@@ -116,6 +110,8 @@ class Welford:
         self.__s = s
 
     def __getvars(self, ddof):
+        if self.__count <= 0:
+            return None
         min_count = ddof
         if self.__count <= min_count:
             return np.full(self.__shape, np.nan)
@@ -123,6 +119,9 @@ class Welford:
             return self.__s / (self.__count - ddof)
 
     def __backup_attrs(self):
-        self.__count_old = self.__count
-        self.__m_old = self.__m.copy()
-        self.__s_old = self.__s.copy()
+        if self.__count <= 0:
+            pass
+        else:
+            self.__count_old = self.__count
+            self.__m_old = self.__m.copy()
+            self.__s_old = self.__s.copy()
