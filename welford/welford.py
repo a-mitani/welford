@@ -19,31 +19,32 @@ import numpy as np
 class Welford:
     """Accumulator object for Welfords online variance algorithm."""
 
-    def __init__(self, data=None, dim=None):
+    def __init__(self, elements=None, shape=None):
         """Initialize with an optional data."""
         # Check arguments
-        if data is None:
-            if dim is None:
-                raise AttributeError("If data is not assigned, 'dim' must be assigned")
+        if elements is None:
+            if shape is None:
+                raise AttributeError(
+                    "If elements is not assigned, 'shape' must be assigned"
+                )
         else:
-            assert data.ndim == 2
-            if dim is not None:
-                assert Nonedata.shape[1] == dim
+            if shape is not None:
+                assert elements[0].shape == shape
 
         # Initialize instance attributes
-        if data is not None:
-            self.__dim = data.shape[1]
+        if elements is not None:
+            self.__shape = elements[0].shape
         else:
-            self.__dim = dim
+            self.__shape = shape
 
-        if data is None:
+        if elements is None:
             self.__count = 0
-            self.__m = np.zeros(self.__dim)
-            self.__s = np.zeros(self.__dim)
+            self.__m = np.zeros(self.__shape)
+            self.__s = np.zeros(self.__shape)
         else:
-            self.__count = data.shape[0]
-            self.__m = np.mean(data, axis=0)
-            self.__s = np.var(data, axis=0, ddof=0) * data.shape[0]
+            self.__count = elements.shape[0]
+            self.__m = np.mean(elements, axis=0)
+            self.__s = np.var(elements, axis=0, ddof=0) * elements.shape[0]
 
         # previous attribute values for rollbacking
         self.__count_old = None
@@ -70,10 +71,9 @@ class Welford:
         """Population variance of the recorded values"""
         return self.__getvars(ddof=0)
 
-    def add(self, data, backup_flg=True):
+    def add(self, element, backup_flg=True):
         # argument check
-        assert data.ndim == 1
-        assert data.shape[0] == self.__dim
+        assert element.shape == self.__shape
 
         # backup for rollbacking
         if backup_flg:
@@ -81,20 +81,19 @@ class Welford:
 
         # Welford's algorithm
         self.__count += 1
-        delta = data - self.__m
+        delta = element - self.__m
         self.__m += delta / self.__count
-        self.__s += delta * (data - self.__m)
+        self.__s += delta * (element - self.__m)
 
-    def add_all(self, data, backup_flg=True):
+    def add_all(self, elements, backup_flg=True):
         # argument check
-        assert data.ndim == 2
-        assert data.shape[1] == self.__dim
+        assert elements[0].shape == self.__shape
 
         # backup for rollbacking
         if backup_flg:
             self.__backup_attrs()
 
-        for elem in data:
+        for elem in elements:
             self.add(elem, backup_flg=False)
 
     def rollback(self):
@@ -119,7 +118,7 @@ class Welford:
     def __getvars(self, ddof):
         min_count = ddof
         if self.__count <= min_count:
-            return np.full(self.__dim, np.nan)
+            return np.full(self.__shape, np.nan)
         else:
             return self.__s / (self.__count - ddof)
 
