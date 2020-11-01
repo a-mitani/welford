@@ -25,17 +25,14 @@ class Welford:
         # Initialize instance attributes
         if elements is not None:
             self.__shape = elements[0].shape
-        else:
-            self.__shape = None
-
-        if elements is None:
-            self.__count = 0
-            self.__m = None
-            self.__s = None
-        else:
             self.__count = elements.shape[0]
             self.__m = np.mean(elements, axis=0)
             self.__s = np.var(elements, axis=0, ddof=0) * elements.shape[0]
+        else:
+            self.__shape = None
+            self.__count = 0
+            self.__m = None
+            self.__s = None
 
         # previous attribute values for rollbacking
         self.__count_old = None
@@ -64,10 +61,10 @@ class Welford:
 
     def add(self, element, backup_flg=True):
         # Initialize if not yet.
-        if self.__count == 0:
+        if self.__shape is None:
+            self.__shape = element.shape
             self.__m = np.zeros(element.shape)
             self.__s = np.zeros(element.shape)
-            self.__shape = element.shape
         # argument check if already initialized
         else:
             assert element.shape == self.__shape
@@ -119,7 +116,7 @@ class Welford:
             return self.__s / (self.__count - ddof)
 
     def __backup_attrs(self):
-        if self.__count <= 0:
+        if self.__shape is None:
             pass
         else:
             self.__count_old = self.__count
