@@ -17,22 +17,38 @@ import numpy as np
 
 
 class Welford:
-    """Accumulator object for Welfords online variance algorithm."""
+    """class Welford
+
+     Accumulator object for Welfords online / parallel variance algorithm.
+
+    Attributes:
+        count (int): The number of accumulated samples.
+        mean (array(D,)): Mean of the accumulated samples.
+        var_s (array(D,)): Sample variance of the accumulated samples.
+        var_p (array(D,)): Population variance of the accumulated samples.
+    """
 
     def __init__(self, elements=None):
-        """Initialize with an optional data."""
+        """__init__
+
+        Initialize with an optional data.
+
+        Args:
+            elements (array(S, D)): data samples.
+
+        """
 
         # Initialize instance attributes
-        if elements is not None:
-            self.__shape = elements[0].shape
-            self.__count = elements.shape[0]
-            self.__m = np.mean(elements, axis=0)
-            self.__s = np.var(elements, axis=0, ddof=0) * elements.shape[0]
-        else:
+        if elements is None:
             self.__shape = None
             self.__count = 0
             self.__m = None
             self.__s = None
+        else:
+            self.__shape = elements[0].shape
+            self.__count = elements.shape[0]
+            self.__m = np.mean(elements, axis=0)
+            self.__s = np.var(elements, axis=0, ddof=0) * elements.shape[0]
 
         # previous attribute values for rollbacking
         self.__count_old = None
@@ -41,25 +57,30 @@ class Welford:
 
     @property
     def count(self):
-        """The number of recorded values"""
         return self.__count
 
     @property
     def mean(self):
-        """Mean of the recorded values"""
         return self.__m
 
     @property
     def var_s(self):
-        """Sample variance of the recorded values"""
         return self.__getvars(ddof=1)
 
     @property
     def var_p(self):
-        """Population variance of the recorded values"""
         return self.__getvars(ddof=0)
 
     def add(self, element, backup_flg=True):
+        """ add
+
+        add one data sample.
+
+        Args:
+            element (array(D, )): data sample.
+            backup_flg (boolean): if True, backup previous state for rollbacking.
+
+        """
         # Initialize if not yet.
         if self.__shape is None:
             self.__shape = element.shape
@@ -80,6 +101,15 @@ class Welford:
         self.__s += delta * (element - self.__m)
 
     def add_all(self, elements, backup_flg=True):
+        """ add_all
+
+        add multiple data samples.
+
+        Args:
+            elements (array(S, D)): data samples.
+            backup_flg (boolean): if True, backup previous state for rollbacking.
+
+        """
         # backup for rollbacking
         if backup_flg:
             self.__backup_attrs()
@@ -97,11 +127,13 @@ class Welford:
         # backup for rollbacking
         if backup_flg:
             self.__backup_attrs()
+
         count = self.__count + other.__count
         delta = self.__m - other.__m
         delta2 = delta * delta
         m = (self.__count * self.__m + other.__count * other.__m) / count
         s = self.__s + other.__s + delta2 * (self.__count * other.__count) / count
+
         self.__count = count
         self.__m = m
         self.__s = s
