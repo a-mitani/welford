@@ -1,11 +1,11 @@
 from setuptools import setup
 
-with open("README_pypi.rst") as f:
+with open("README.rst") as f:
     readme = f.read()
 
 kwargs = {
     "name": "welford",
-    "version": "0.2.1",
+    "version": "0.2.3",
     "description": "Python (numpy) implementation of Welford's algorithm.",
     "author": "Akira Mitani",
     "author_email": "amitani.public@gmail.com",
