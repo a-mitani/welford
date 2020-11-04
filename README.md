@@ -14,6 +14,7 @@ Welford's method is more numerically stable than the standard method. The theori
 This library is inspired by the [jvf's implementation](https://github.com/jvf/welford), which is implemented without using numpy library. 
 
 ## Install
+Download package via [PyPI repository](https://pypi.org/project/welford/)
 ```
 $ pip install welford
 ```
