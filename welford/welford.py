@@ -31,7 +31,8 @@ class Welford:
     def __init__(self, elements=None):
         """__init__
 
-        Initialize with an optional data.
+        Initialize with an optional data. 
+        For the calculation efficiency, Welford's method is not used on the initialization process.
 
         Args:
             elements (array(S, D)): data samples.
