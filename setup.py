@@ -5,7 +5,7 @@ with open("README.rst") as f:
 
 kwargs = {
     "name": "welford",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "description": "Python (numpy) implementation of Welford's algorithm.",
     "author": "Akira Mitani",
     "author_email": "amitani.public@gmail.com",
