@@ -42,19 +42,24 @@ class Welford:
         # Initialize instance attributes
         if elements is None:
             self.__shape = None
+            # current attribute values
             self.__count = 0
             self.__m = None
             self.__s = None
+            # previous attribute values for rollbacking
+            self.__count_old = None
+            self.__m_old = None
+            self.__s_old = None
+
         else:
             self.__shape = elements[0].shape
+            # current attribute values
             self.__count = elements.shape[0]
             self.__m = np.mean(elements, axis=0)
             self.__s = np.var(elements, axis=0, ddof=0) * elements.shape[0]
-
-        # previous attribute values for rollbacking
-        self.__count_old = None
-        self.__m_old = None
-        self.__s_old = None
+            # previous attribute values for rollbacking
+            self.__count_old = None
+            self.__init_old_with_nan()
 
     @property
     def count(self):
@@ -87,6 +92,7 @@ class Welford:
             self.__shape = element.shape
             self.__m = np.zeros(element.shape)
             self.__s = np.zeros(element.shape)
+            self.__init_old_with_nan()
         # argument check if already initialized
         else:
             assert element.shape == self.__shape
@@ -120,8 +126,8 @@ class Welford:
 
     def rollback(self):
         self.__count = self.__count_old
-        self.__m = self.__m_old
-        self.__s = self.__s_old
+        self.__m[...] = self.__m_old[...]
+        self.__s[...] = self.__s_old[...]
 
     def merge(self, other, backup_flg=True):
         """Merge this accumulator with another one."""
@@ -153,5 +159,11 @@ class Welford:
             pass
         else:
             self.__count_old = self.__count
-            self.__m_old = self.__m.copy()
-            self.__s_old = self.__s.copy()
+            self.__m_old[...] = self.__m[...]
+            self.__s_old[...] = self.__s[...]
+
+    def __init_old_with_nan(self):
+        self.__m_old = np.empty(self.__shape)
+        self.__m_old[...] = np.nan
+        self.__s_old = np.empty(self.__shape)
+        self.__s_old[...] = np.nan
