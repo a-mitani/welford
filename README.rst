@@ -4,11 +4,12 @@ Welford
 Python (Numpy) implementation of Welford’s algorithm, which is online or
 parallel algorithm for calculating variances.
 
-The algorithm is described in the followings, \* `Wikipedia:Welford
-Online
-Algorithm <https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm>`__
-\* `Wikipedia:Welford Parallel
-Algorithm <https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Parallel_algorithm>`__
+The algorithm is described in the followings,
+
+-  `Wikipedia:Welford Online
+   Algorithm <https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm>`__
+-  `Wikipedia:Welford Parallel
+   Algorithm <https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Parallel_algorithm>`__
 
 Welford’s method is more numerically stable than the standard method.
 The theoritical background of Welford’s method is mentioned in detail on

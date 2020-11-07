@@ -3,6 +3,7 @@ Python (Numpy) implementation of Welford's algorithm,
 which is online or parallel algorithm for calculating variances.
 
 The algorithm is described in the followings,
+
 * [Wikipedia:Welford Online Algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm)
 * [Wikipedia:Welford Parallel Algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Parallel_algorithm)
 
